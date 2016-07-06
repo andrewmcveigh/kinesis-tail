@@ -81,7 +81,11 @@ func main() {
 	}
 	streamName := os.Args[1]
 
-	svc := kinesis.New(session.New(), aws.NewConfig().WithRegion("us-east-1"))
+	region, present := os.LookupEnv("AWS_DEFAULT_REGION")
+	if !present {
+		region = "us-east-1"
+	}
+	svc := kinesis.New(session.New(), aws.NewConfig().WithRegion(region))
 
 	shardIds, err := getShards(svc, streamName)
 	if err != nil {
